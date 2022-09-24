@@ -26,8 +26,13 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
 	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
-	// HSQLDB - in-memory DB
-	testImplementation("org.hsqldb:hsqldb:2.6.1")
+	// PostgreSQL DB
+	implementation("org.postgresql:postgresql:42.3.3")
+
+	// testcontainers
+	testImplementation("org.testcontainers:testcontainers:1.17.3")  // Core dependency
+	testImplementation("org.testcontainers:junit-jupiter:1.17.3")   // For integration support with Junit5
+	testImplementation("org.testcontainers:postgresql:1.17.3")      // For PostgresSQL testing module
 
 }
 
