@@ -34,6 +34,9 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter:1.17.3")   // For integration support with Junit5
 	testImplementation("org.testcontainers:postgresql:1.17.3")      // For PostgresSQL testing module
 
+	// Flyway
+	runtimeOnly("org.flywaydb:flyway-core:7.2.0")
+
 }
 
 tasks.withType<KotlinCompile> {
