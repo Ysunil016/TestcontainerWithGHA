@@ -9,14 +9,16 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest
-@Testcontainers
 class TestcontainerJunit5ApplicationTests {
 
 	companion object {
 
-		@Container
 		private val postgreSQLContainer = PostgreSQLContainer("postgres:latest")
 			.withExposedPorts(5432)
+
+		init {
+			postgreSQLContainer.start()
+		}
 
 		@DynamicPropertySource
 		@JvmStatic
