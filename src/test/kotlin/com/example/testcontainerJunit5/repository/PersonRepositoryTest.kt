@@ -1,6 +1,7 @@
 package com.example.testcontainerJunit5.repository
 
 import com.example.testcontainerJunit5.model.Person
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -22,6 +24,12 @@ class PersonRepositoryTest {
     @Container
     private val postgreSQLContainer = PostgreSQLContainer("postgres:latest")
       .withExposedPorts(5432)
+      .withClasspathResourceMapping(
+        "application.properties", "/application.properties", BindMode.READ_ONLY
+      )
+      .withFileSystemBind(
+        "/Users/ayushigupta/Desktop/hello.txt", "/hello.txt", BindMode.READ_ONLY
+      )
 
     @DynamicPropertySource
     @JvmStatic
@@ -45,6 +53,35 @@ class PersonRepositoryTest {
     val actual = personRepository.findByPreferredName("Tom")
 
     Assertions.assertEquals(2, actual.size)
+  }
+
+  @Test
+  fun `should execute command in container`() {
+    postgreSQLContainer.execInContainer("touch", "test.txt")
+
+    val lsResult = postgreSQLContainer.execInContainer("ls", "-la")
+    val stdout: String = lsResult.stdout
+    val exitCode: Int = lsResult.exitCode
+
+    println("ls Output: $stdout")
+
+    assertThat(stdout).contains("test.txt")
+    assertThat(stdout).contains("hello.txt")
+    assertThat(stdout).contains("application.properties")
+    assertThat(exitCode).isZero
+  }
+
+  @Test
+  fun `should get the mapped port of container`() {
+    val mappedPort = postgreSQLContainer.getMappedPort(5432)
+
+    println("Mapped Port: $mappedPort")
+  }
+
+  @Test
+  fun `should get logs of container`() {
+    val logs = postgreSQLContainer.logs
+    println("Container Logs: $logs")
   }
 
 }
