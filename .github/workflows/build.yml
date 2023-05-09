@@ -17,3 +17,6 @@ jobs:
         
       - name: Print docker version
         run: docker --version
+        
+      - name: Run tests
+        run: ./gradlew test
